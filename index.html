@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Milyoner-Sivas</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+</head>
+<body>
+	<h3 id="title">Milyoner-Sivas</h3><div class="wrapper">
+		<div class="left">
+			<div class="text-box">
+				<h3 id="text">Puan </h3>
+
+				<div id="score" class="score"></div><br>
+				<h3 id="text">Kronometre</h3>
+				<div id="text" ><span >00</span> <span>:</span>  <span class="time">00</span></div>
+			</div>
+
+	</div>
+	<div class="container">
+		<div id="text" class="text"></div>
+		<div class="questions"></div>
+		<div class="resim">
+			
+			<div class="kurallar" ></div>
+		</div>
+<div class="gameover">Game Over!</div>
+	</div>
+
+		<div class="right">
+			<div class="text-box-right">
+				<h3 id="text">Cevap nedir?</h3>
+				<div class="answer"></div>
+			</div>
+			<div class="butons">
+				<button id="btn0" class="btn"><span id="secenek0">secenek0</span></button>
+				<button id="btn1" class="btn"><span id="secenek1">secenek1</span></button>
+				<button id="btn2" class="btn"><span id="secenek2">secenek2</span></button>
+				<button id="btn3" class="btn"><span id="secenek3">secenek3</span></button>
+			</div>
+				<button id="game-start">Oyuna Başla</button>
+	</div>
+
+</div>
+<script>
+
+var metin ="<strong>Kurallar</strong><br><br>1-) Lütfen Belirli Süre içerisinde Soruları cevaplayınız.<br><br>2-)Sorular Resim veya Video Türünde Gelebilir.<br><br>3-)Tek Bir Seçeneğe Tıklama Hakkınız Mecuttur.<br><br>4-)Yanlış Cevapladığınızda Size Doğru Sonuç Gösterilecektir.<br><br>5-)Soruları Size Verilen Süre İle Cevaplayınız.<br><br><center>Başarılar...</center>";
+//Milyoner constructor oluşturulması
+
+var sorular = function(text,secenekler,cevap){
+	this.text=text;
+	this.secenekler=secenekler;
+	this.cevap=cevap;
+}
+//Questions'ların oluşturulması
+
+var q1 = new sorular("Kurtlar Vadisi Pusu'da Süleyman Çakır Kaçıncı Bölümde Ölmüştür?",["44","45","46","47"],"45");
+var q2 = new sorular("Dinlediğiniz Müzik Hangi Dizi Müziğine Aittir?",["Kurtlar Vadisi","Acı Hayat","Deliyürek","Ezel"],"Deliyürek");
+var q3 = new sorular("Aşağıda Hangi Ülkenin Bayrağı Bulunmamaktadır?",["Türkiye","Türkmenistan","Arjantin","Hiçbiri"],"Hiçbiri");
+
+//Cevapların Kontrol Edilmesi
+
+sorular.prototype.cevapKontrol=function(cevap){
+	return this.cevap === cevap;
+}
+
+var questions = [q1,q2,q3];
+
+//Milyoneri Başlatma
+
+var milyoner = function(questions){
+this.questions = questions;
+this.score = 0;
+this.questionIndex = 0;
+}
+
+//Soruların Alınması
+
+milyoner.prototype.sorularıAl = function(){
+	return this.questions[this.questionIndex];
+}
+//Tahmin
+
+var soruSayisi=1;
+
+milyoner.prototype.tahmin=function(cevap){
+	var question = this.sorularıAl();
+	if(question.cevapKontrol(cevap) ){
+		this.score ++;
+		$(".answer").fadeIn("slow");
+		$(".answer").css("background-color","green");
+		  $(".answer").html("Tebrikler! Doğru Cevap");
+	}
+	else{
+		$(".answer").fadeIn("slow");
+		$(".answer").css("background-color","red");
+		$(".answer").html("Üzgünüm.Yanlış Cevap");
+		var questionn = soru.sorularıAl();
+		var cevapp = questionn.cevap;
+		var secenekler = questionn.secenekler;
+		for(var i=0; i<secenekler.length; i++){
+			if(secenekler[i] == cevapp){
+				$("#btn"+i).css("background-color","green");
+			}
+		}
+		
+	}
+
+	this.questionIndex ++;
+	
+	soruSayisi ++;
+	
+}
+
+//Oyun Bitti mi 
+
+milyoner.prototype.oyunBittiMi=function(){
+	return this.questions.length === this.questionIndex;
+}
+
+var saniye=40;
+var soru = new milyoner(questions);
+var timerId=0;
+
+//JQuery Kodları
+
+$(".kurallar").html(metin);
+$(function(){
+$(".butons").hide();
+$(".gameover").hide();
+$(".answer").hide();
+$("#play-again").hide();
+$("#game-start").click(function(){
+	timerId=setInterval(timer,1000);
+	$("#game-start").fadeOut("fast");
+	$(".butons").fadeIn("slow");
+	sorulariYukle();
+	$(".kurallar").html("");
+});
+});
+var j=0;
+function sorulariYukle(){
+	if(soru.oyunBittiMi()){
+		scoreGoster();
+		saniye=0;
+		clearInterval(timerId);
+		$(".questions").text(" ");
+    	$(".text").text("");
+       	$(".resim").html("");
+    	$(".gameover").show();
+    	$(".butons").hide(); 	
+    	$(".gameover").animate({   		
+    		fontSize:'100px'	
+    	},2500);	
+    	$(".answer").hide();   	
+	}else{
+	$(function(){
+		
+		saniye=40;
+		var resimler=["<img  src='assets/2.jpeg' />","<video width='700px' height='475px'  controls autoplay> <source src='deliyürek.mp4' type='video/mp4'></video>","<img  src='assets/devletler.jpeg' />"];
+		var question = soru.sorularıAl();
+		$(".answer").hide();
+		var secenekk = question.secenekler;
+		$(".questions").html(question.text);
+		for(var i=0;i<secenekk.length;i++){
+			$("#secenek"+i).html(secenekk[i]);	
+			scoreGoster();
+			$(".text").html("Soru "+soruSayisi+"#:");	
+			tahminn('btn'+i,secenekk[i]);
+			$("#btn"+i).css("background-color","#008CBA");	
+		}
+		$(".resim").html(resimler[j]);
+		});
+	}
+}
+function tahminn(id,tahmin){
+	var btn = document.getElementById(id);
+	$(function(){
+	btn.onclick=function(){
+		soru.tahmin(tahmin);	
+		setTimeout(function(){sorulariYukle();
+		},3000);	
+		j++;
+
+	}
+	});
+}
+
+function scoreGoster(){
+	$("#score").html(soru.score+" / 3");
+}
+
+var san=0;
+function timer() {
+    san = saniye%60;  
+    var timer =document.querySelector(".time");   
+    timer.innerHTML=san;
+    saniye --;
+    if(saniye ==-1){setTimeout(function(){alert("Üzgünüm,Verilen Süre İçerisinde Soruyu Cevaplamadınız.");
+    $(".resim").html("");
+    $(".butons").fadeOut("slow");
+    $(".questions").html("");
+    $(".text").html("");
+    $(".answer").hide();
+    $(".gameover").show();
+    $(".gameover").animate({	
+    		fontSize:'100px'
+    	},2500);
+},2000);
+    clearInterval(timerId);
+}
+}
+</script>
+</body>
+</html>
